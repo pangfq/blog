@@ -1,7 +1,7 @@
 # Change baseurl before deploy
 # baseurl = "https://pangfq.github.io"
 languageCode = "en-us"
-title = "pangfq's blog"
+title = "Attentively records the good life"
 
 # Theme i18n support
 # Available values: en, fr, id, ja, ko, pt-br, zh-cn, zh-tw, es, de, nl, it, th, el, uk, ar
