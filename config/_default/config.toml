@@ -1,7 +1,8 @@
 # Change baseurl before deploy
 baseurl = "https://pangfq.github.io/blog"
 languageCode = "en-us"
-title = "pangfq's blog"
+title = "Num21"
+description = "除了饥饿与疾病，一切痛苦来自于价值观"
 
 # Theme i18n support
 # Available values: en, fr, id, ja, ko, pt-br, zh-cn, zh-tw, es, de, nl, it, th, el, uk, ar
