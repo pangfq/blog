@@ -3,7 +3,7 @@ title: adb命令
 description: adb，是Android Debug Bridge，Android调试桥。
 date: 2025-03-29T07:57:48-08:00
 categories:
-    - 工作
+    - Example Category
 tags:
     - Android
     - ADB
