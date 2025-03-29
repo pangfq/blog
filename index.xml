@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Num21</title><link>https://pangfq.github.io/blog/</link><description>Recent content on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 02 Feb 2024 04:14:54 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/index.xml" rel="self" type="application/rss+xml"/><item><title>Hello World</title><link>https://pangfq.github.io/blog/p/hello-world/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>https://pangfq.github.io/blog/p/hello-world/</guid><description>&lt;img src="https://pangfq.github.io/blog/p/hello-world/cover.jpg" alt="Featured image of post Hello World" />&lt;p>Welcomeeee to Hugo theme Stack. This is your first post. Edit or delete it, then start writing!&lt;/p>
+&lt;p>For more information about this theme, check the documentation: &lt;a class="link" href="https://stack.jimmycai.com/" target="_blank" rel="noopener"
+>https://stack.jimmycai.com/&lt;/a>&lt;/p>
+&lt;p>Want a site like this? Check out &lt;a class="link" href="https://github.com/CaiJimmy/hugo-theme-stack-starter" target="_blank" rel="noopener"
+>hugo-theme-stack-stater&lt;/a>&lt;/p>
+&lt;blockquote>
+&lt;p>Photo by &lt;a class="link" href="https://unsplash.com/@pawel_czerwinski" target="_blank" rel="noopener"
+>Pawel Czerwinski&lt;/a> on &lt;a class="link" href="https://unsplash.com/" target="_blank" rel="noopener"
+>Unsplash&lt;/a>&lt;/p>&lt;/blockquote></description></item><item><title>adb命令</title><link>https://pangfq.github.io/blog/p/work-android-adb/</link><pubDate>Fri, 02 Feb 2024 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/work-android-adb/</guid><description>&lt;h3 id="概述">概述
+&lt;/h3>&lt;p>adb，是Android Debug Bridge，Android调试桥。&lt;/p>
+&lt;p>其实就是Android提供的一个命令行工具，可以与设备进行通信，方便调试。&lt;/p>
+&lt;h3 id="工作原理">工作原理
+&lt;/h3>&lt;p>看着小小的adb工具，其实是一个C/S架构的程序，一共涉及到3个组件：&lt;/p>
+&lt;ol>
+&lt;li>Client：客户端，用于发送命令。就是在电脑上打开的终端窗口，输入adb命令，就是一个adb客户端了，我们可以打开多个窗口。&lt;/li>
+&lt;li>Server：服务端，用于接收命令并转发到设备。服务端在电脑上作为后台进程运行。&lt;/li>
+&lt;li>adbd：守护程序，用于在设备上运行命令。守护程序在每个设备上作为后台进程运行。&lt;/li>
+&lt;/ol>
+&lt;h3 id="usb连接">USB连接
+&lt;/h3>&lt;p>USB连接调试，就是通过数据线连接，调试之前要去“开发者模式”中把“USB调试”打开。&lt;/p>
+&lt;h3 id="wifi连接">WIFI连接
+&lt;/h3>&lt;p>没想到吧，还可以WIFI连接调试，但这个有点鸡肋，因为首先要用数据线连接，输入adb tcpip port 告诉设备打开一个端口建立一个TCP/IP连接，然后才能实现WIFI连接，问题是我手边有数据线还使用WIFI连接干啥？！（Android11以上的设备不需要先用数据线连接设置，可以直接到开发者模式下打开相关设置即可）&lt;/p>
+&lt;p>另一个鸡肋的原因是，测试机我们不会专门给它充电，全靠上班连电脑开发时顺便充下电，所以WIFI连接用的很少，但也要知道可以实现WIFI连接调试。&lt;/p>
+&lt;p>我们看下具体的操作过程（Android10及以下）：&lt;/p>
+&lt;ol>
+&lt;li>连接数据线&lt;/li>
+&lt;li>在终端输入adb tcpip 5555，表示通知设备开始监听5555端口的tcp/ip连接&lt;/li>
+&lt;li>拔掉数据线&lt;/li>
+&lt;li>找到设备ip地址&lt;/li>
+&lt;li>在终端输入adb connect 设备ip地址&lt;/li>
+&lt;/ol>
+&lt;p>断开连接：adb disconnect&lt;/p>
+&lt;h3 id="常用命令">常用命令
+&lt;/h3>&lt;h4 id="查看设备">查看设备
+&lt;/h4>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb devices
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="安装应用">安装应用
+&lt;/h4>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">// -r 是replace的首字母，表示覆盖安装
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb install -r apk绝对路径
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="复制文件">复制文件
+&lt;/h4>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">// 表示从手机上把某个文件复制到电脑上
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb pull remote &lt;span class="nb">local&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// 表示从电脑上把某个文件复制到设备上
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb push &lt;span class="nb">local&lt;/span> remote
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="停止adb服务器">停止adb服务器
+&lt;/h4>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">// 如果发生一些异常情况，可以尝试停止服务器解决
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb kill-server
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// 杀掉adb服务器之后，随便在终端输入任意adb命令即可重新启动adb服务器
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="指定设备发送">指定设备发送
+&lt;/h4>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ adb devices
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">List of devices attached
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">emulator-5554 device
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">emulator-5555 device
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// 通过-s指定设备序列号，即可发送命令到指定设备
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ adb -s emulator-5555 install helloWorld.apk
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h4 id="发送shell命令">发送shell命令
+&lt;/h4>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">// 有两种方式
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// 1. 进入shell后直接使用shell命令
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ adb shell
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$&amp;gt;ls
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// 2. 不进入shell
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ adb shell ls
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>shell命令有很多，比如截屏、录制视频、启动activity、操作sqlite等等&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">adb shell screencap /sdcard/screen.png
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">// ...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>Image gallery</title><link>https://pangfq.github.io/blog/p/image-gallery/</link><pubDate>Sat, 26 Aug 2023 00:00:00 +0000</pubDate><guid>https://pangfq.github.io/blog/p/image-gallery/</guid><description>&lt;img src="https://pangfq.github.io/blog/p/image-gallery/2.jpg" alt="Featured image of post Image gallery" />&lt;p>Hugo theme Stack supports the creation of interactive image galleries using Markdown. It&amp;rsquo;s powered by &lt;a class="link" href="https://photoswipe.com/" target="_blank" rel="noopener"
+>PhotoSwipe&lt;/a> and its syntax was inspired by &lt;a class="link" href="https://typlog.com/" target="_blank" rel="noopener"
+>Typlog&lt;/a>.&lt;/p>
+&lt;p>To use this feature, the image must be in the same directory as the Markdown file, as it uses Hugo&amp;rsquo;s page bundle feature to read the dimensions of the image. &lt;strong>External images are not supported.&lt;/strong>&lt;/p>
+&lt;h2 id="syntax">Syntax
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-markdown" data-lang="markdown">&lt;span class="line">&lt;span class="cl">![&lt;span class="nt">Image 1&lt;/span>](&lt;span class="na">1.jpg&lt;/span>) ![&lt;span class="nt">Image 2&lt;/span>](&lt;span class="na">2.jpg&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="result">Result
+&lt;/h2>&lt;p>&lt;img src="https://pangfq.github.io/blog/p/image-gallery/1.jpg"
+width="2000"
+height="1400"
+srcset="https://pangfq.github.io/blog/p/image-gallery/1_hu_811b671457ffff1f.jpg 480w, https://pangfq.github.io/blog/p/image-gallery/1_hu_c74af69dd7c1dcda.jpg 1024w"
+loading="lazy"
+alt="Image 1"
+class="gallery-image"
+data-flex-grow="142"
+data-flex-basis="342px"
+> &lt;img src="https://pangfq.github.io/blog/p/image-gallery/2.jpg"
+width="1500"
+height="2250"
+srcset="https://pangfq.github.io/blog/p/image-gallery/2_hu_42f6436cb1637265.jpg 480w, https://pangfq.github.io/blog/p/image-gallery/2_hu_27862a49608da0d9.jpg 1024w"
+loading="lazy"
+alt="Image 2"
+class="gallery-image"
+data-flex-grow="66"
+data-flex-basis="160px"
+>&lt;/p>
+&lt;blockquote>
+&lt;p>Photo by &lt;a class="link" href="https://unsplash.com/@mymind" target="_blank" rel="noopener"
+>mymind&lt;/a> and &lt;a class="link" href="https://unsplash.com/@lukechesser" target="_blank" rel="noopener"
+>Luke Chesser&lt;/a> on &lt;a class="link" href="https://unsplash.com/" target="_blank" rel="noopener"
+>Unsplash&lt;/a>&lt;/p>&lt;/blockquote></description></item><item><title>Shortcodes</title><link>https://pangfq.github.io/blog/p/shortcodes/</link><pubDate>Fri, 25 Aug 2023 00:00:00 +0000</pubDate><guid>https://pangfq.github.io/blog/p/shortcodes/</guid><description>&lt;img src="https://pangfq.github.io/blog/p/shortcodes/cover.jpg" alt="Featured image of post Shortcodes" />&lt;p>For more details, check out the &lt;a class="link" href="https://stack.jimmycai.com/writing/shortcodes" target="_blank" rel="noopener"
+>documentation&lt;/a>.&lt;/p>
+&lt;h2 id="bilibili-video">Bilibili video
+&lt;/h2>
+&lt;div class="video-wrapper">
+&lt;iframe src="https://player.bilibili.com/player.html?as_wide=1&amp;amp;high_quality=1&amp;amp;page=1&amp;bvid=BV1d4411N7zD"
+scrolling="no"
+frameborder="no"
+framespacing="0"
+allowfullscreen="true"
+>
+&lt;/iframe>
+&lt;/div>
+&lt;h2 id="tencent-video">Tencent video
+&lt;/h2>
+&lt;div class="video-wrapper">
+&lt;iframe src="https://v.qq.com/txp/iframe/player.html?vid=g0014r3khdw&amp;auto=0"
+scrolling="no"
+frameborder="no"
+framespacing="0"
+allowfullscreen="true"
+>
+&lt;/iframe>
+&lt;/div>
+&lt;h2 id="youtube-video">YouTube video
+&lt;/h2>&lt;div class="video-wrapper">
+&lt;iframe loading="lazy"
+src="https://www.youtube.com/embed/0qwALOOvUik"
+allowfullscreen
+title="YouTube Video"
+>
+&lt;/iframe>
+&lt;/div>
+&lt;h2 id="generic-video-file">Generic video file
+&lt;/h2>&lt;div class="video-wrapper">
+&lt;video
+controls
+src="https://www.w3schools.com/tags/movie.mp4"
+>
+&lt;p>
+Your browser doesn't support HTML5 video. Here is a
+&lt;a href="https://www.w3schools.com/tags/movie.mp4">link to the video&lt;/a> instead.
+&lt;/p>
+&lt;/video>
+&lt;/div>
+&lt;h2 id="gist">Gist
+&lt;/h2>&lt;script src="https://gist.github.com/CaiJimmy/e2751a943de10b2a5b3a8a6c2120cb86.js">&lt;/script>
+&lt;h2 id="gitlab">GitLab
+&lt;/h2>&lt;script
+type="application/javascript"
+src="https://gitlab.com/-/snippets/2589724.js"
+>&lt;/script>
+&lt;h2 id="quote">Quote
+&lt;/h2>&lt;blockquote>
+&lt;p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.&lt;/p>&lt;span class="cite">&lt;span>― &lt;/span>&lt;span>A famous person, &lt;/span>&lt;a href="https://en.wikipedia.org/wiki/Book">&lt;cite>The book they wrote&lt;/cite>&lt;/a>&lt;/span>&lt;/blockquote>
+&lt;hr>
+&lt;blockquote>
+&lt;p>Photo by &lt;a class="link" href="https://unsplash.com/@codioful" target="_blank" rel="noopener"
+>Codioful&lt;/a> on &lt;a class="link" href="https://unsplash.com/photos/WDSN62Qdxuk" target="_blank" rel="noopener"
+>Unsplash&lt;/a>&lt;/p>&lt;/blockquote></description></item><item><title>APK安装流程</title><link>https://pangfq.github.io/blog/p/work-android-apk_install/</link><pubDate>Tue, 29 Mar 2022 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/work-android-apk_install/</guid><description>&lt;h3 id="概述">概述
+&lt;/h3>&lt;ol>
+&lt;li>解压：复制并解压到data/app目录下；&lt;/li>
+&lt;li>校验签名；&lt;/li>
+&lt;li>解析AndroidManifest.xml：在data/data/目录下创建以应用包名命名的目录；&lt;/li>
+&lt;li>优化dex：Dalvik虚拟机会使用Dex2Opt工具对主dex优化成odex文件，其实就是将涉及到的依赖和dex打包到一起；如果是ART虚拟机将会扫描所有dex文件并转成oat机器码文件；&lt;/li>
+&lt;li>注册四大组件：将AndroidManifest.xml解析出的四大组件注册到PackageManagerService中，这样APP在启动某个四大组件时会通过跨进程通信到SystemServer进程中进行校验（PMS、AMS等各种MS都在SystemServer进程运行）；&lt;/li>
+&lt;li>最后发送安装完成的广播。&lt;/li>
+&lt;/ol></description></item><item><title>APK打包流程</title><link>https://pangfq.github.io/blog/p/work-android-apk_pkg/</link><pubDate>Mon, 28 Mar 2022 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/work-android-apk_pkg/</guid><description>&lt;h3 id="概述">概述
+&lt;/h3>&lt;ol>
+&lt;li>资源：使用aapt工具生成R文件，就是资源名与资源id的映射表；&lt;/li>
+&lt;li>代码：使用javac编译成class文件，再转成dex文件；&lt;/li>
+&lt;li>未签名的apk：使用ApkBuilder生成未签名的APK文件；&lt;/li>
+&lt;li>签名：使用JarSigner签名，生成META-INF目录以及里面3个文件，号称签名三兄弟；&lt;/li>
+&lt;li>打包：使用ZipAlign工具压缩打包。&lt;/li>
+&lt;/ol>
+&lt;p>上述是v1签名打包的流程，如果是v2、v3签名打包，则4和5互换顺序，并且签名使用ApkSigner工具，因为v2、v3是对ZIP进行签名的，所以要先打成ZIP包后进行签名，并将签名信息写入到ZIP的某个块中。&lt;/p></description></item><item><title>Archives</title><link>https://pangfq.github.io/blog/archives/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>https://pangfq.github.io/blog/archives/</guid><description/></item><item><title>Links</title><link>https://pangfq.github.io/blog/links/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pangfq.github.io/blog/links/</guid><description>&lt;p>To use this feature, add &lt;code>links&lt;/code> section to frontmatter.&lt;/p>
+&lt;p>This page&amp;rsquo;s frontmatter:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">links&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">title&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">GitHub&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">description&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">GitHub is the world&amp;#39;s largest software development platform.&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">website&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">https://github.com&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">image&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">title&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">TypeScript&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">description&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">website&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">https://www.typescriptlang.org&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">image&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ts-logo-128.jpg&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;code>image&lt;/code> field accepts both local and external images.&lt;/p></description></item><item><title>Search</title><link>https://pangfq.github.io/blog/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pangfq.github.io/blog/search/</guid><description/></item></channel></rss>
