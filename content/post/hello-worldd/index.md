@@ -1,13 +1,14 @@
 ---
-title: Hello World
+title: Hello World2
 description: Welcome to Hugo Theme Stack
 slug: hello-world
-date: 2022-03-06 00:00:00+0000
+date: 2025-03-29 00:00:00+0000
 image: cover.jpg
 categories:
-    - Example Category
+    - 工作
 tags:
-    - Example Tag
+    - android
+    - adb
 weight: 1       # You can add weight to some posts to override the default sorting (date descending)
 ---
 
