@@ -1,15 +1,12 @@
 ---
-title: Hello World2
+title: adb命令
 description: Welcome to Hugo Theme Stack
-slug: hello-world
-date: 2025-03-29 00:00:00+0000
-image: cover.jpg
+date: 2025-03-29T09:26:54-08:00
 categories:
     - 工作
 tags:
     - android
     - adb
-weight: 1       # You can add weight to some posts to override the default sorting (date descending)
 ---
 
 Welcomeeee to Hugo theme Stack. This is your first post. Edit or delete it, then start writing!
