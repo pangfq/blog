@@ -6,14 +6,14 @@ favicon = "favicon.ico"
 
 [footer]
 since = 2014
-customText = "永远相信美好的事情即将发生"
+customText = ""
 
 [dateFormat]
 published = "Jan 02, 2025"
 lastUpdated = "Jan 02, 2025 15:04 MST"
 
 [sidebar]
-emoji = "🍥"
+# emoji = "🍥"
 subtitle = "但行好事，莫问前程"
 
 [sidebar.avatar]
@@ -38,7 +38,7 @@ type = "search"
 type = "archives"
 
 [widgets.homepage.params]
-limit = 5
+limit = 10
 
 [[widgets.homepage]]
 type = "categories"
