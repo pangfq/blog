@@ -2,7 +2,7 @@
 title: adb命令
 description: Android Debug Bridge，Android调试桥
 slug: work-android-adb
-date: 2025-03-29 09:46:00+0000
+date: 2022-03-06 00:00:00+0000
 categories:
     - 工作
 tags:
