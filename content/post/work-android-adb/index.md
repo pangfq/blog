@@ -1,8 +1,8 @@
 ---
-title: Hello Worldddddd
+title: adb命令
 description: Welcome to Hugo Theme Stack
-slug: hello-world
-date: 2022-03-06 00:00:00+0000
+slug: work-android-adb
+date: 2025-03-29T09:38:54-08:00
 categories:
     - 工作
 tags:
