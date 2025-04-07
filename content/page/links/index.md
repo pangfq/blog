@@ -8,6 +8,7 @@ menu:
 
 comments: false
 ---
+### 关于我
 
 来自山西，现居北京。
 
@@ -17,6 +18,7 @@ comments: false
 
 见过美好，归于平淡。
 
-**与我联系 ✨**
+### 联系我
 
-GitHub: [pangfq](https://github.com/pangfq)
+- Gmail: a9qr21@gmail.com
+- Github: [pangfq](https://github.com/pangfq)
