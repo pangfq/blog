@@ -1,10 +1,5 @@
 ---
-title: Links
-links:
-  - title: GitHub
-    description: GitHub is the world's largest software development platform.
-    website: https://github.com
-    image: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+title: 关于
 menu:
     main: 
         weight: 4
@@ -14,20 +9,14 @@ menu:
 comments: false
 ---
 
-To use this feature, add `links` section to frontmatter.
+来自山西，现居北京。
 
-This page's frontmatter:
+技术方向：Android、Vue、Python、SpringBoot等。
 
-```yaml
-links:
-  - title: GitHub
-    description: GitHub is the world's largest software development platform.
-    website: https://github.com
-    image: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
-  - title: TypeScript
-    description: TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.
-    website: https://www.typescriptlang.org
-    image: ts-logo-128.jpg
-```
+个人爱好：打球、骑行、开车、滑雪、电子产品、旅行、美食。
 
-`image` field accepts both local and external images.
+见过美好，归于平淡。
+
+**与我联系 ✨**
+
+GitHub: [pangfq](https://github.com/pangfq)
