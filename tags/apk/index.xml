@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Apk on Num21</title><link>https://pangfq.github.io/blog/tags/apk/</link><description>Recent content in Apk on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 29 Mar 2022 04:14:54 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/tags/apk/index.xml" rel="self" type="application/rss+xml"/><item><title>APK安装流程</title><link>https://pangfq.github.io/blog/p/work-android-apk_install/</link><pubDate>Tue, 29 Mar 2022 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/work-android-apk_install/</guid><description>&lt;h3 id="概述">概述
+&lt;/h3>&lt;ol>
+&lt;li>解压：复制并解压到data/app目录下；&lt;/li>
+&lt;li>校验签名；&lt;/li>
+&lt;li>解析AndroidManifest.xml：在data/data/目录下创建以应用包名命名的目录；&lt;/li>
+&lt;li>优化dex：Dalvik虚拟机会使用Dex2Opt工具对主dex优化成odex文件，其实就是将涉及到的依赖和dex打包到一起；如果是ART虚拟机将会扫描所有dex文件并转成oat机器码文件；&lt;/li>
+&lt;li>注册四大组件：将AndroidManifest.xml解析出的四大组件注册到PackageManagerService中，这样APP在启动某个四大组件时会通过跨进程通信到SystemServer进程中进行校验（PMS、AMS等各种MS都在SystemServer进程运行）；&lt;/li>
+&lt;li>最后发送安装完成的广播。&lt;/li>
+&lt;/ol></description></item><item><title>APK打包流程</title><link>https://pangfq.github.io/blog/p/work-android-apk_pkg/</link><pubDate>Mon, 28 Mar 2022 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/work-android-apk_pkg/</guid><description>&lt;h3 id="概述">概述
+&lt;/h3>&lt;ol>
+&lt;li>资源：使用aapt工具生成R文件，就是资源名与资源id的映射表；&lt;/li>
+&lt;li>代码：使用javac编译成class文件，再转成dex文件；&lt;/li>
+&lt;li>未签名的apk：使用ApkBuilder生成未签名的APK文件；&lt;/li>
+&lt;li>签名：使用JarSigner签名，生成META-INF目录以及里面3个文件，号称签名三兄弟；&lt;/li>
+&lt;li>打包：使用ZipAlign工具压缩打包。&lt;/li>
+&lt;/ol>
+&lt;p>上述是v1签名打包的流程，如果是v2、v3签名打包，则4和5互换顺序，并且签名使用ApkSigner工具，因为v2、v3是对ZIP进行签名的，所以要先打成ZIP包后进行签名，并将签名信息写入到ZIP的某个块中。&lt;/p></description></item></channel></rss>
