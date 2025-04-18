@@ -3,8 +3,6 @@ title: 汽车的P挡、手刹、脚刹有什么区别
 description: 
 slug: life-car-brake
 date: 2021-02-01T18:55:20-08:00
-categories:
-    - life
 tags:
     - 汽车
 ---

@@ -3,8 +3,6 @@ title: 汽车为什么不踩油门也能走
 description: 
 slug: life-car-idling
 date: 2021-02-03T18:55:20-08:00
-categories:
-    - life
 tags:
     - 汽车
 ---

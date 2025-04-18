@@ -3,8 +3,6 @@ title: 探索更科学的投篮姿势
 description: 
 slug: life-basketball-shoot
 date: 2021-02-04T18:55:20-08:00
-categories:
-    - life
 tags:
     - 篮球
 ---
