@@ -8,17 +8,17 @@ menu:
 
 comments: false
 ---
-### 关于我
+## 关于我
 
 来自山西，现居北京。
 
 技术方向：Android、Vue、Python、SpringBoot等。
 
-个人爱好：打球、骑行、开车、滑雪、电子产品、旅行、美食。
+个人爱好：打球、骑行、电子产品、旅行、美食。
 
-见过美好，归于平淡。
+但行好事，莫问前程。
 
-### 联系我
+## 联系我
 
 - Gmail: a9qr21@gmail.com
 - Github: [pangfq](https://github.com/pangfq)
