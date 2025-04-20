@@ -17,5 +17,11 @@ url = "https://github.com/pangfq"
 [social.params]
 icon = "brand-github"
 
-[params.social]
-   a-email = "mailto:a9qr21@gmail.com"
+[[social]]
+identifier = "email"
+name = "Email"
+url = "mailto:a9qr21@gmail.com"
+
+
+[social.params]
+icon = "brand-email"
