@@ -3,6 +3,8 @@ title: 与你在一起的日子
 description: 
 slug: love-wife-2021100200
 date: 2021-10-02T18:55:20-08:00
+categories:
+    - 随笔
 ---
 ## 2021-10-02
 

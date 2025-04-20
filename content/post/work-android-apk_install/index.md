@@ -3,8 +3,9 @@ title: APK安装流程
 description: 
 slug: work-android-apk_install
 date: 2022-03-29T04:14:54-08:00
+categories:
+    - Android
 tags:
-    - android
     - apk
 ---
 ## 概述

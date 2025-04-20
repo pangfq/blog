@@ -2,8 +2,9 @@
 title: Java中的内存模型
 slug: work-java-jmm
 date: 2021-02-02T18:55:20-08:00
-tags:
+categories:
     - Java
+tags:
     - JMM
 ---
 ## 什么是内存模型

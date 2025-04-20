@@ -2,8 +2,9 @@
 title: Java中的CAS机制
 slug: work-java-cas
 date: 2021-02-08T19:11:20-08:00
-tags:
+categories:
     - Java
+tags:
     - CAS
 ---
 

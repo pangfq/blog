@@ -2,6 +2,8 @@
 title: HTTP的缓存机制
 slug: work-http-cache
 date: 2021-02-01T18:55:20-08:00
+categories:
+    - Java
 tags:
     - HTTP
 ---

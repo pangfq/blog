@@ -3,8 +3,9 @@ title: APK打包流程
 description: 
 slug: work-android-apk_pkg
 date: 2022-03-28T04:14:54-08:00
+categories:
+    - Android
 tags:
-    - android
     - apk
 ---
 

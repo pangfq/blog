@@ -2,8 +2,9 @@
 title: volatile关键字的作用
 slug: work-java-volatile
 date: 2021-02-05T18:55:20-08:00
-tags:
+categories:
     - Java
+tags:
     - volatile
 ---
 

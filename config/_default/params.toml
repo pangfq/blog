@@ -17,7 +17,7 @@ date = "2006-01-02"
 
 [sidebar]
 # emoji = "🍥"
-subtitle = "但行好事，莫问前程\n\n\n"
+subtitle = "但行好事，莫问前程"
 
 [sidebar.avatar]
 enabled = true

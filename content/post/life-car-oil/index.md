@@ -3,6 +3,8 @@ title: 汽车油耗为什么冬天会更高
 description: 
 slug: life-car-oil
 date: 2021-02-02T18:55:20-08:00
+categories:
+    - 随笔
 tags:
     - 汽车
 ---

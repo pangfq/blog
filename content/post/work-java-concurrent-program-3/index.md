@@ -2,8 +2,9 @@
 title: 并发编程中的三个特性
 slug: work-java-concurrent-program-3
 date: 2021-02-04T17:02:20-08:00
-tags:
+categories:
     - Java
+tags:
     - 并发编程
 ---
 
