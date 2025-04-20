@@ -20,5 +20,5 @@ comments: false
 
 ## 联系我
 
-- Gmail: a9qr21@gmail.com
+- Email: a9qr21@gmail.com
 - Github: [pangfq](https://github.com/pangfq)
