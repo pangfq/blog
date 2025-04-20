@@ -1,7 +1,6 @@
 ---
 title: HTTP的缓存机制
-description: 
-slug: work-android-apk_pkg
+slug: work-http-cache
 date: 2021-02-01T18:55:20-08:00
 tags:
     - HTTP

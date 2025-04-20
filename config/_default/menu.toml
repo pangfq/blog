@@ -21,7 +21,3 @@ icon = "brand-github"
 identifier = "email"
 name = "Email"
 url = "mailto:a9qr21@gmail.com"
-
-
-[social.params]
-icon = "brand-email"
