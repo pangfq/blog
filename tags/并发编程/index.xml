@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>并发编程 on Num21</title><link>https://pangfq.github.io/blog/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</link><description>Recent content in 并发编程 on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 04 Feb 2021 17:02:20 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml"/><item><title>并发编程中的三个特性</title><link>https://pangfq.github.io/blog/p/java-concurrent-program-3/</link><pubDate>Thu, 04 Feb 2021 17:02:20 -0800</pubDate><guid>https://pangfq.github.io/blog/p/java-concurrent-program-3/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>在多线程的编程中，首先要掌握的是三个特性：可见性、原子性、有序性，这三个特性是多线程编程的基础，理解了三个特性之后才能理解多线程编程。&lt;/p>
+&lt;h2 id="可见性">可见性
+&lt;/h2>&lt;p>可见性，指的是内存可见性。&lt;/p>
+&lt;p>就是当多线程并发访问内存中的共享变量的时候，一个线程对共享变量的修改，其他线程能够立即看到。&lt;/p>
+&lt;p>这个特性出现的前提源于CPU内核中高速缓存的存在引起的。&lt;/p>
+&lt;p>由于CPU计算速度远远快于内存条的读取速度，所以不得不在两者之间增加一个缓存，这个缓存就叫高速缓存，位于CPU内部，并且CPU中每个核心都有一个高速缓存。那为什么不直接将内存条全部换成高速缓存呢？因为高速缓存太过昂贵，权衡利弊之下只能如此。&lt;/p>
+&lt;p>这也导致多线程编程下出现了可见性问题。&lt;/p>
+&lt;p>假如在一个双核CPU中分别运行两个线程A和B，内存中有一个int型变量i，其默认值为1，线程A读取i到自己的高速缓存中，并执行i++，此时i=2，但并没有刷新到内存中。&lt;/p>
+&lt;p>接着线程B从内存中读取到的变量i的值依旧是1，这样就导致共享变量在线程间不可见的问题。&lt;/p>
+&lt;p>我们后面再讲解决方法。&lt;/p>
+&lt;h2 id="原子性">原子性
+&lt;/h2>&lt;p>原子性，指的是操作的原子性。&lt;/p>
+&lt;p>原子性类似于数据库中的事务操作，要么全部执行，要么全部不执行。&lt;/p>
+&lt;p>对于CPU中的操作就是指令，这些指令都是原子性的，而向上到了Java层的操作，就是代码，Java是高级语言，有很强的封装性，可能一个操作包含了多个子操作，比如：i++，这个操作可以分成3个子操作：&lt;/p>
+&lt;ol>
+&lt;li>取值：获取i的值&lt;/li>
+&lt;li>计算：计算i+1的结果&lt;/li>
+&lt;li>赋值：把结果赋值给i&lt;/li>
+&lt;/ol>
+&lt;p>不是原子性的操作，在多线程编程下就会有问题，因为操作系统可以在任意一步子操作中切走CPU时间片。&lt;/p>
+&lt;p>举个例子：两个线程同时对变量进行i++操作，i的默认值为1，当线程A执行到第2步子操作也就是执行了1+1=2这步，已经得到结果了，但还没有赋值给i，操作系统将CPU时间片切到线程B，线程B执行第1步子操作获取i的值，按理讲i=2了，但由于线程A并没有将结果赋值给i导致线程B获取到的i=1，此后线程B执行完所有子操作得到的i=2，而线程A得到的i同样是2，但其实是两个线程都做了i++的操作，理应为3才对，这就是多线程编程下不是原子性操作带来的问题。&lt;/p>
+&lt;p>上述也可以类比成在ATM上存钱的过程，比如两个人同时在ATM上用一个账户存钱，原账户为0元，两人同时查询到账户看到显示为0元，然后各自往里面存10万，但一个人存入后还没来得及将账户金额更新，另一个人就存进去了，结果各自存完钱后看到的金额是10万，但其实两个人都存了10万，应该账户上有20万才对。&lt;/p>
+&lt;h2 id="有序性">有序性
+&lt;/h2>&lt;p>有序性，指的是代码执行的有序性。&lt;/p>
+&lt;p>Java为了提高代码的执行效率，会对代码进行重拍优化，当然这个重排并不会影响执行结果。&lt;/p>
+&lt;p>下面举个例子：&lt;/p>
+&lt;p>Object obj = new Object();&lt;/p>
+&lt;p>这是一行创建对象并赋值到变量obj的代码，重排优化之前是这个步骤：&lt;/p>
+&lt;ol>
+&lt;li>创建变量obj&lt;/li>
+&lt;li>创建内存空间得到地址0x111&lt;/li>
+&lt;li>在该内存空间中初始化对象new Object()&lt;/li>
+&lt;li>将该内存空间的地址0x111赋值给变量obj&lt;/li>
+&lt;/ol>
+&lt;p>但重排优化之后，3和4的步骤就调换了顺序，也就是先将内存空间的地址赋值给变量obj，然后才初始化内存空间，这就导致在多线程编程下获取到的变量obj的值不为null，但对象却没有初始化的情况，太诡异了。&lt;/p></description></item></channel></rss>

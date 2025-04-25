@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Apk on Num21</title><link>https://pangfq.github.io/blog/tags/apk/</link><description>Recent content in Apk on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 29 Mar 2022 04:14:54 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/tags/apk/index.xml" rel="self" type="application/rss+xml"/><item><title>APK安装流程</title><link>https://pangfq.github.io/blog/p/android-apk_install/</link><pubDate>Tue, 29 Mar 2022 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/android-apk_install/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;ol>
+&lt;li>解压：复制并解压到data/app目录下；&lt;/li>
+&lt;li>校验签名；&lt;/li>
+&lt;li>解析AndroidManifest.xml：在data/data/目录下创建以应用包名命名的目录；&lt;/li>
+&lt;li>优化dex：Dalvik虚拟机会使用Dex2Opt工具对主dex优化成odex文件，其实就是将涉及到的依赖和dex打包到一起；如果是ART虚拟机将会扫描所有dex文件并转成oat机器码文件；&lt;/li>
+&lt;li>注册四大组件：将AndroidManifest.xml解析出的四大组件注册到PackageManagerService中，这样APP在启动某个四大组件时会通过跨进程通信到SystemServer进程中进行校验（PMS、AMS等各种MS都在SystemServer进程运行）；&lt;/li>
+&lt;li>最后发送安装完成的广播。&lt;/li>
+&lt;/ol></description></item><item><title>APK打包流程</title><link>https://pangfq.github.io/blog/p/android-apk_pkg/</link><pubDate>Mon, 28 Mar 2022 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/android-apk_pkg/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;ol>
+&lt;li>资源：使用aapt工具生成R文件，就是资源名与资源id的映射表；&lt;/li>
+&lt;li>代码：使用javac编译成class文件，再转成dex文件；&lt;/li>
+&lt;li>未签名的apk：使用ApkBuilder生成未签名的APK文件；&lt;/li>
+&lt;li>签名：使用JarSigner签名，生成META-INF目录以及里面3个文件，号称签名三兄弟；&lt;/li>
+&lt;li>打包：使用ZipAlign工具压缩打包。&lt;/li>
+&lt;/ol>
+&lt;p>上述是v1签名打包的流程，如果是v2、v3签名打包，则4和5互换顺序，并且签名使用ApkSigner工具，因为v2、v3是对ZIP进行签名的，所以要先打成ZIP包后进行签名，并将签名信息写入到ZIP的某个块中。&lt;/p></description></item><item><title>APK瘦身</title><link>https://pangfq.github.io/blog/p/android-minify/</link><pubDate>Mon, 28 Mar 2022 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/android-minify/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>APK瘦身，主要分为两个方面：代码和资源。&lt;/p>
+&lt;h2 id="代码">代码
+&lt;/h2>&lt;p>代码方面的精简，需要具体代码具体分析，而且精简效果不明显，目前总结如下：&lt;/p>
+&lt;ol>
+&lt;li>移除未使用的代码，比如：
+&lt;ul>
+&lt;li>多余的import语句&lt;/li>
+&lt;li>没有被调用到的方法或属性&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>开启代码混淆；&lt;/li>
+&lt;li>实体类别用set、get方法，直接用public修饰属性；&lt;/li>
+&lt;li>合并一些功能相同的类，比如：
+&lt;ul>
+&lt;li>有很多工具类中的功能有重叠等&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>通过代码重构解决代码冗余问题，比如：
+&lt;ul>
+&lt;li>使用三目运算符代替if-else&lt;/li>
+&lt;li>减少临时变量的定义&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h2 id="资源">资源
+&lt;/h2>&lt;p>资源方面的精简，涉及的东西较多，而且精简效果很明显，如下：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>图片资源的精简，比如：&lt;/p>
+&lt;ul>
+&lt;li>压缩质量，使用TinyPng、智图等工具对图片进行适当压缩；&lt;/li>
+&lt;li>选择合适的图片格式，比如：没有透明通道的就用JPEG格式、简单的图标就用SVG格式、也可以用webP代替JPEG、PNG等；&lt;/li>
+&lt;li>选择合适的图片尺寸，比如：让设计师按照xxhdpi规格来设计和切图，别小View用大图，那就浪费了；&lt;/li>
+&lt;li>尽量使用drawable xml、color、.9.png来代替图片；&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Native库的精简，比如：&lt;/p>
+&lt;ul>
+&lt;li>把不支持的CPU架构的Native库都移除，比如：对于一般的手机APP来讲，x86、x86_64、mips这些都可以移除&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>减少语言支持&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>v7包中支持的语言有80种，但一般APP只在一个或者少数几个国家发布，所以只要留下相应国家的语言支持即可，这个在build.gradle中配置APP支持的语言即可，这样大概减少5M&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-groovy" data-lang="groovy">&lt;span class="line">&lt;span class="cl">&lt;span class="n">defaultConfig&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">resConfigs&lt;/span> &lt;span class="s2">&amp;#34;zh-rCN&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s2">&amp;#34;zh-rHK&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s2">&amp;#34;zh-rTW&amp;#34;&lt;/span>&lt;span class="o">,&lt;/span> &lt;span class="s2">&amp;#34;en&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>资源名混淆&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>使用微信开源的AndResGuard将资源名重命名为简短的名称，并最后使用7zip打包进一步减小APK&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-groovy" data-lang="groovy">&lt;span class="line">&lt;span class="cl">&lt;span class="n">gradle&lt;/span> &lt;span class="n">resguard&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">buildType&lt;/span>&lt;span class="o">][&lt;/span>&lt;span class="n">productFlavor&lt;/span>&lt;span class="o">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>原理概述&lt;/strong>：apk包中有一个resources.arsc文件，该文件保存着apk中所有资源id与资源路径的映射关系，但由于资源路径、资源命名过长，导致resources.arsc文件较大，如果将过长的命名改的简短些，就可以降低该文件的大小，从而达到精简apk的目的&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>保留mapping文件&lt;/strong>：跟代码混淆一样，会生成源资源文件名 和 混淆后的资源文件名的 mapping文件，该文件还是有用的，比如app如有接入热修复框架，那么需要热修复某资源的时候，就要将该资源命名为混淆后的名称&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h2 id="总结">总结
+&lt;/h2>&lt;p>APK精简分为代码和资源两个方面，对于整个APK来讲，资源精简的效果是最明显的，属于事半功倍类型，但代码精简效果就差了很多，属于出力不讨好类型，但对于个人的代码重构优化能力的提升还是很有帮助的。&lt;/p></description></item></channel></rss>

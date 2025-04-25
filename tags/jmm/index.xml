@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>JMM on Num21</title><link>https://pangfq.github.io/blog/tags/jmm/</link><description>Recent content in JMM on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 02 Feb 2021 18:55:20 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/tags/jmm/index.xml" rel="self" type="application/rss+xml"/><item><title>Java中的内存模型</title><link>https://pangfq.github.io/blog/p/java-jmm/</link><pubDate>Tue, 02 Feb 2021 18:55:20 -0800</pubDate><guid>https://pangfq.github.io/blog/p/java-jmm/</guid><description>&lt;h2 id="什么是内存模型">什么是内存模型
+&lt;/h2>&lt;p>为了保证并发编程的正确性，包括可见性、有序性、原子性，定义了多线程下读写系统内存的操作==规范==&lt;/p>
+&lt;p>所以，内存模型是一个抽象概念，是一种规范&lt;/p>
+&lt;p>但为什么会有Java内存模型？&lt;/p>
+&lt;h2 id="为什么需要内存模型">为什么需要内存模型
+&lt;/h2>&lt;p>我们知道，之所以Java是跨平台的，是因为Java虚拟机的功劳，是Java虚拟机屏蔽了各种硬件和操作系统的访问差异，保证Java程序在各种平台上的运行都能一致&lt;/p>
+&lt;p>在这个里面，就有对内存的规范，Java提供了一个内存规范，或者说模型，让不同的操作系统去实现各自的内存访问机制&lt;/p>
+&lt;h2 id="总结">总结
+&lt;/h2>&lt;p>Java内存模型，是和Java的并发编程有关&lt;/p></description></item></channel></rss>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Binder on Num21</title><link>https://pangfq.github.io/blog/tags/binder/</link><description>Recent content in Binder on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 04 Feb 2021 18:55:20 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/tags/binder/index.xml" rel="self" type="application/rss+xml"/><item><title>Binder机制</title><link>https://pangfq.github.io/blog/p/android-ipc-binder/</link><pubDate>Thu, 04 Feb 2021 18:55:20 -0800</pubDate><guid>https://pangfq.github.io/blog/p/android-ipc-binder/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>Binder是Android中实现IPC（RPC）的API，学习API的使用并不复杂，但底层的原理也要了解。&lt;/p>
+&lt;p>在了解Binder的底层原理之前，先看看传统的IPC是如何实现的。&lt;/p>
+&lt;h2 id="传统ipc原理">传统IPC原理
+&lt;/h2>&lt;p>进程间的内存空间是相互隔离的，那两者如何通信呢？&lt;/p>
+&lt;p>这个有点像Android中，两个模块相互解耦，没有任何依赖，但想要实现两模块间的通信一样。解决方法就是引入一个基础模块，让两模块都依赖它，通过这个基础模块来充当两模块间通信的桥梁。&lt;/p>
+&lt;p>其实传统IPC的实现跟这个类似，也是通过一个基础模块，叫内核空间（Kernel Space），而APP进程叫作用户空间（User Space）。&lt;/p>
+&lt;p>具体是先将发送方进程的数据拷贝到内核空间，然后再将数据从内核空间拷贝到接收方进程中。&lt;/p>
+&lt;p>可以看到，传统的IPC方式，通过两次内存拷贝才实现数据传递的，效率有点低。&lt;/p>
+&lt;p>而Android中的Binder只有一次拷贝，大大提升了性能，这也为什么Android没有直接用Linux中的IPC机制，而是自己重新实现的原因。&lt;/p>
+&lt;h2 id="binder原理">Binder原理
+&lt;/h2>&lt;p>首先需要了解Linux的一个知识点：【内存映射】。&lt;/p>
+&lt;p>简单讲，就是将用户空间的一块内存区域映射到内核空间。&lt;/p>
+&lt;p>映射关系建立后，用户对这块内存区域的修改可以直接反应到内核空间，反之内核空间对这段区域的修改也能直接反应到用户区域。&lt;/p>
+&lt;p>Linux中的内存映射是通过mmap()实现的。&lt;/p>
+&lt;p>一次完整的BinderIPC操作是这样的：&lt;/p>
+&lt;ol>
+&lt;li>首先Binder驱动在内核空间创建一个数据接收缓存区；&lt;/li>
+&lt;li>建立接收方进程的用户空间地址和在内核空间创建的数据缓存区的映射关系；&lt;/li>
+&lt;li>发送方进程通过系统调用copy_from_user()将数据拷贝到内核的数据接收缓存区，由于内核缓存区和接收方进程的用户空间已经建立了映射关系，所以就相当于把数据拷贝到了接收方进程的内存空间。&lt;/li>
+&lt;/ol>
+&lt;p>所以Android中的Binder相比传统的IPC方式，少了一次拷贝，大大提高了性能。&lt;/p>
+&lt;h2 id="binder架构">Binder架构
+&lt;/h2>&lt;p>Binder机制是基于C/S架构的，其中定义了4个角色：&lt;/p>
+&lt;ol>
+&lt;li>Client&lt;/li>
+&lt;li>Server&lt;/li>
+&lt;li>Binder驱动&lt;/li>
+&lt;li>ServiceManager&lt;/li>
+&lt;/ol>
+&lt;h2 id="binder实现">Binder实现
+&lt;/h2>&lt;p>除了底层原理与传统IPC不一样之外，在实现上也不一样。&lt;/p>
+&lt;p>Binder使用了面向对象的思想来实现IPC调用，就好像一个进程中对象之间的相互调用似的。&lt;/p>
+&lt;p>具体是Client通过Server提供的Binder引用来访问Server，同样的，Server通过Client提供的Binder引用来访问Client。&lt;/p>
+&lt;h2 id="注意事项">注意事项
+&lt;/h2>&lt;p>为什么通过Binder传输的数据要进行序列化？&lt;/p>
+&lt;p>答：Binder传输其实底层是跨进程通信，虽然在同一个平台，没有跨平台的要求，但涉及到了不同的进程，进程间的内存单元是相互隔离的，Binder是通过数据拷贝实现的跨进程通信，所以也是需要将数据打包成一个整体统一进行发送，就像搬家一样，要等东西都装好车才开始搬家，不能每装一件东西就搬家吧，这样效率也太低了。&lt;/p></description></item></channel></rss>

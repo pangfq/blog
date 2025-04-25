@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Multidex on Num21</title><link>https://pangfq.github.io/blog/tags/multidex/</link><description>Recent content in Multidex on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 28 Mar 2022 04:14:54 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/tags/multidex/index.xml" rel="self" type="application/rss+xml"/><item><title>MultiDex</title><link>https://pangfq.github.io/blog/p/android-multidex/</link><pubDate>Mon, 28 Mar 2022 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/android-multidex/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>MultiDex，是Android官方出的，一个用来解决Dalvik无法运行大型项目问题的方案。&lt;/p>
+&lt;p>先来看下MultiDex产生的历史背景，其实就是Dalvik为什么无法运行大型项目。&lt;/p>
+&lt;h2 id="历史背景">历史背景
+&lt;/h2>&lt;p>在Dalvik虚拟机时代，由于Google的短视，在设计Dalvik虚拟机的时候，没有想到有朝一日，一个APK中的dex会如此之大，导致Dalvik虚拟机无法加载大型项目，具体表现为以下3点：&lt;/p>
+&lt;ol>
+&lt;li>只能加载一个dex文件&lt;/li>
+&lt;li>单个dex文件中的方法数不能超过65536（方法数超限）&lt;/li>
+&lt;li>单个dex文件中的方法占用内存不能超过指定内存（LinearAlloc，线性内存超限）&lt;/li>
+&lt;/ol>
+&lt;h3 id="方法数超限">方法数超限
+&lt;/h3>&lt;p>Dalvik在首次加载apk中的dex的时候，会使用dexopt工具对dex进行优化，优化过程中会使用short类型的字段索引dex中的方法数，short是2个字节，2^16=65536，所以这也是为什么单个dex中的方法数不能超过65536的原因。&lt;/p>
+&lt;h3 id="线性内存超限">线性内存超限
+&lt;/h3>&lt;p>和方法数超限的问题一样，都是发生在dexopt过程，会使用LinearAlloc来缓存dex中的方法信息，LinearAlloc是一个固定的缓存区（Android4.0之前是4M，Android4.0之后是8M或16M），所以可能在方法数还未达到65536就已经超过线性内存了。&lt;/p>
+&lt;h2 id="解决方案">解决方案
+&lt;/h2>&lt;p>Android官方出了一个Multidex的方案，就是多个dex的意思，大概是在打包apk的时候，判断dex中的方法数是否超过65536，如果超了则对dex进行拆分，拆分成一个主dex和多个分dex，会把直接引用放在主dex中，间接引用放在分dex中，并让主dex调用分dex。&lt;/p>
+&lt;p>你会有疑问，上述解决方案只能解决65536方法数的问题，那LinearAlloc的问题如何解决呢？&lt;/p>
+&lt;p>LinearAlloc的问题一般出现在低端机型，比如Android4.0之前的机型，其LinearAlloc线性内存缓存大小才4M，所以非常容易出现线性内存的问题，如果想要适配低端机型，可以指定dex方法数来进一步降低方法数，比如你可以设置成40000，表示方法数不能超过40000。&lt;/p>
+&lt;p>下面是相关代码与Gradle配置：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-groovy" data-lang="groovy">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 1. 在app模块的build.gradle中配置开启multidex
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="n">android&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">defaultConfig&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">multiDexEnabled&lt;/span> &lt;span class="kc">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 以下可选，用来配置dex方法数，解决低端机型的LinearAlloc问题
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">afterEvaluate&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">tasks&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">matching&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">it&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">name&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">startsWith&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s1">&amp;#39;dex&amp;#39;&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}.&lt;/span>&lt;span class="na">each&lt;/span> &lt;span class="o">{&lt;/span> &lt;span class="n">dx&lt;/span> &lt;span class="o">-&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="n">dx&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">additionalParameters&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">dx&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">additionalParameters&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">[]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 设置每一个dex的方法数不超过48000，占用内存不超过4M，即可保证不在2.3的低端机型上出现线性内存的限制
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">dx&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">additionalParameters&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="s1">&amp;#39;--set-max-idx-number=48000&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// --main-dex-list= 参数是一个类列表的文件，在该文件中的类会被打包在第一个 dex 中。
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// multidex.keep 里面列上需要打包到第一个 dex 的 class 文件，注意，如果需要混淆的话需要写混淆之后的 class 。
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">dx&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">additionalParameters&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="s2">&amp;#34;--main-dex-list=$projectDir/multidex.keep&amp;#34;&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">toString&lt;/span>&lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 2. 添加依赖
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="n">dependencies&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">implementation&lt;/span> &lt;span class="s1">&amp;#39;androidx.multidex:multidex:2.0.1&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 3. 自定义Application继承MultidexApplication&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">App&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">MultiDexApplication&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nd">@Override&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">protected&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">attachBaseContext&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Context&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">base&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">super&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">attachBaseContext&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">base&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// 除了直接继承MultidexApplication外，还可以自己覆写attachBaseContext()方法，并自行调用MultiDex.install(this);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// MultiDex.install(this);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="相关问题">相关问题
+&lt;/h2>&lt;h3 id="art有这个问题吗">ART有这个问题吗？
+&lt;/h3>&lt;p>答：没有。&lt;/p>
+&lt;p>因为ART虚拟机，在安装APK时，不需要用到Dex2Opt工具，所以就不存在上述问题。&lt;/p>
+&lt;p>ART虚拟机会扫描所有Dex文件，并将它们编译为一个后缀名为.oat的机器码文件。&lt;/p>
+&lt;h3 id="dalvik为什么要进行dex2opt">Dalvik为什么要进行Dex2Opt？
+&lt;/h3>&lt;p>答：因为Dalvik加载dex时，会用到很多依赖，Dex2Opt的过程，就是将这些依赖提前都准备好，并和dex一同打包成.odex文件，这是一种空间换时间来提高加载效率的方式。&lt;/p>
+&lt;h3 id="dex2opt的时机是什么">Dex2Opt的时机是什么？
+&lt;/h3>&lt;p>答：有两个时机：&lt;/p>
+&lt;ol>
+&lt;li>安装APK的时候，对主dex进行opt&lt;/li>
+&lt;li>首次运行APP的时候，在Application中执行MultiDex.install(this)，是对其余dex进行opt&lt;/li>
+&lt;/ol></description></item></channel></rss>

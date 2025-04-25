@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>签名 on Num21</title><link>https://pangfq.github.io/blog/tags/%E7%AD%BE%E5%90%8D/</link><description>Recent content in 签名 on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 28 Mar 2022 04:14:54 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/tags/%E7%AD%BE%E5%90%8D/index.xml" rel="self" type="application/rss+xml"/><item><title>签名机制</title><link>https://pangfq.github.io/blog/p/android-sign/</link><pubDate>Mon, 28 Mar 2022 04:14:54 -0800</pubDate><guid>https://pangfq.github.io/blog/p/android-sign/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>在APK打包过程中会进行签名，在APK安装过程中Android系统会验证签名，&lt;/p>
+&lt;p>另外还有使用加固工具加固、打多渠道包等等都会涉及到签名，所以很有必要来了解下APK的签名机制。&lt;/p>
+&lt;p>在了解APK签名机制之前，先来看下为什么要对APK签名？&lt;/p>
+&lt;h2 id="为什么要签名">为什么要签名
+&lt;/h2>&lt;p>这个问题其实就是数字签名的作用，当然首先需要了解什么是数字签名，这个我们就不具体讲了，直接来看数字签名的作用，数字签名的作用是两点：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>验证数据的真实性&lt;/p>
+&lt;p>就是验证数据发送方是不是我们希望的发送方&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>验证数据的完整性&lt;/p>
+&lt;p>就是数据发送过来后有没有被篡改&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>对于APK的签名来讲，数据的实体就是APK，那APK的签名作用同样也是两点：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>验证APK的真实性&lt;/p>
+&lt;p>就是保证开发者发布的APK不被别人冒名顶替，应用市场的类似“洗白白”功能就是通过验证APK的真实性来实现的；&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>验证APK的完整性&lt;/p>
+&lt;p>就是保证APK发布之后不被别人篡改APK的内容&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>上述就是为什么要对APK进行签名的原因。&lt;/p>
+&lt;h2 id="签名方案">签名方案
+&lt;/h2>&lt;p>到目前为止，Android的签名机制已经迭代了3个版本：&lt;/p>
+&lt;ol>
+&lt;li>v1，基于JAR签名&lt;/li>
+&lt;li>v2，APK签名方案，在Android7.0引入&lt;/li>
+&lt;li>v3，APK签名方案，在Android9.0引入&lt;/li>
+&lt;/ol>
+&lt;p>可以看到v1是基于JAR的签名方案，而v2、v3都是基于APK的签名方案，只是v3比v2多了新功能，但整体没大改。&lt;/p>
+&lt;h3 id="v1">v1
+&lt;/h3>&lt;p>解压一个使用v1签名后的APK包后，里面有一个META-INF目录，该目录下有3个文件：&lt;/p>
+&lt;ol>
+&lt;li>MANIFEST.MF&lt;/li>
+&lt;li>CERT.SF&lt;/li>
+&lt;li>CERT.RSA&lt;/li>
+&lt;/ol>
+&lt;p>这就是v1签名过程生成的3个文件，姑且称之为“签名三兄弟”吧（让我想到了coco的奶茶三兄弟：布丁、仙草、珍珠），下面是v1签名流程图（来自网络）：&lt;/p>
+&lt;p>&lt;img src="https://pic1.zhimg.com/80/v2-f8f1ce068c1945007b3cdc77ea16ba44_1440w.jpg"
+loading="lazy"
+>&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>使用SHA1算法对APK中的每个文件生成摘要&lt;/p>
+&lt;p>将每个文件名和其摘要的Base64编码，都保存到MANIFEST.MF文件中&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>使用SHA1算法对MANIFEST.MF文件二次摘要&lt;/p>
+&lt;p>将二次摘要保存到CERT.SF文件&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>使用签名文件中的私钥对CERT.SF的摘要进行签名&lt;/p>
+&lt;p>将签名、证书（公钥）保存到CERT.RSA文件&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>将三个文件保存到META-INF目录中&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>这几步都是有用的，假如有人篡改了APK中的某个文件，那在安装APK时校验这个文件对相应的SHA1值就知道有没有篡改过了；&lt;/p>
+&lt;p>那假如篡改完某个文件后，又把该文件对应的SHA1也改成篡改后的SHA1是不是就可以了？不行，因为其所在的MANIFEST.MF文件的摘要没变的话也可以被检查出来；&lt;/p>
+&lt;p>那把其所在文件MANIFEST.MF文件的摘要也给改了是不是就可以了？对不起，还是不行。因为MANIFEST.MF文件的摘要是保存在CERT.SF文件中的，并且最后用开发者的私钥对CERT.SF文件进行了加密，也就是签名，篡改者因为没有开发者的私钥，篡改MANIFEST.MF文件的摘要之后，因为无法继续篡改签名而最终导致安装失败。&lt;/p>
+&lt;p>那要是用篡改者自己生成的私钥来进行签名的话，是不是就可以了呢？确实可以签名成功，但是如果包名不变的话，即使发布到应用市场，也无法通过市场的“洗白白”功能，该功能就是通过和APP官网的APK的签名摘要进行对比从而识别出山寨APP；&lt;/p>
+&lt;p>那如果把包名改了呢？够狠的，把人家包名和签名都改了，那就成二次打包了，不劳无获，真可耻。&lt;/p>
+&lt;p>这个也是有办法解决的，就是在启动APP后校验该APP的签名摘要是否与真实签名摘要是否一致，如果不一致则直接闪退。&lt;/p>
+&lt;p>当然你可能还会想到，假如通过反编译把这段代码注释掉呢？这个就属于安全领域的问题，咱这里就不讨论下去了。&lt;/p>
+&lt;h3 id="v2">v2
+&lt;/h3>&lt;p>v2的出现是为了解决v1中存在的问题的，我们看下v1签名存在哪些问题：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>签名校验耗时严重&lt;/p>
+&lt;p>因为v1会对所有文件计算SHA1摘要，所以耗时严重&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>完整性校验不强&lt;/p>
+&lt;p>因为v1只会对APK中部分文件进行摘要和签名，并不是所有的文件，假如往APK中增加一些文件是不会影响签名的&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>v2签名的原理不是给APK内部的文件进行摘要和签名的，而是把APK当成一个ZIP文件来处理，ZIP文件结构：&lt;/p>
+&lt;ol>
+&lt;li>ZIP内容&lt;/li>
+&lt;li>ZIP中央目录&lt;/li>
+&lt;li>ZIP中央目录结尾&lt;/li>
+&lt;/ol>
+&lt;p>首先把ZIP内容按照每1M的大小进行分块计算摘要，然后把这些摘要用签名文件的私钥进行签名，最后连同签名文件的证书（包含公钥）写到ZIP内容块之后，ZIP中央目录块之前的位置，作为APK签名块。&lt;/p>
+&lt;p>这样就能保证即使在APK中新增了文件也会导致签名发生变化从而校验失败；另外因为是按照ZIP内容每1M进行计算摘要的，计算时间大大缩短，从而解决了v1中校验耗时的问题。&lt;/p>
+&lt;h3 id="v3">v3
+&lt;/h3>&lt;p>v3是在v2的基础上增加了支持签名升级的功能，这里就不展开讲了，有兴趣的自行查阅。&lt;/p>
+&lt;h2 id="相关问题">相关问题
+&lt;/h2>&lt;p>为APP申请微博、微信等开放平台的一些能力的时候，平台会要求填入该APP的应用签名，这个应用签名指的是什么？&lt;/p>
+&lt;p>答：一看应用签名，是不是上述说的使用签名文件的私钥对APK摘要进行加密后的密文（签名）呢？&lt;/p>
+&lt;p>其实不是，如果是的话，那每次APP升级都得修改平台上的“签名”了。事实上，平台说的“应用签名”指的是证书的摘要，所以可以用java命令从签名文件中获取，也可以从APK中获取。&lt;/p>
+&lt;p>下图（来自网络）是java命令获取的证书指纹（摘要），就是所谓的“应用签名”：&lt;/p>
+&lt;p>&lt;img src="https://img-blog.csdn.net/20170309200918660?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZ2l0aHViXzIwMTE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"
+loading="lazy"
+>&lt;/p>
+&lt;h2 id="参考">参考
+&lt;/h2>&lt;p>&lt;a class="link" href="https://zhuanlan.zhihu.com/p/130394904" target="_blank" rel="noopener"
+>https://zhuanlan.zhihu.com/p/130394904&lt;/a>&lt;/p></description></item></channel></rss>

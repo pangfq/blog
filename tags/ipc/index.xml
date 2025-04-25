@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>IPC on Num21</title><link>https://pangfq.github.io/blog/tags/ipc/</link><description>Recent content in IPC on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 04 Feb 2021 18:55:20 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/tags/ipc/index.xml" rel="self" type="application/rss+xml"/><item><title>IPC简介</title><link>https://pangfq.github.io/blog/p/android-ipc/</link><pubDate>Thu, 04 Feb 2021 18:55:20 -0800</pubDate><guid>https://pangfq.github.io/blog/p/android-ipc/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>IPC，全称为Inter Process Communication，翻译成中文为进程间通信或者跨进程通信。&lt;/p>
+&lt;p>概念不难理解，就是不同进程间的数据交换，或者相互调用，但为啥非要专门强调下进程间的通信呢？你看人家线程就没有线程间通信的说法。&lt;/p>
+&lt;p>其实，这个要从进程和线程的概念讲起了。&lt;/p>
+&lt;h2 id="什么是进程">什么是进程
+&lt;/h2>&lt;p>进程是内存分配的最小单元。&lt;/p>
+&lt;p>什么意思？就是操作系统是按照进程来分配内存单元的，各自进程有各自的内存空间，不同内存单元相互隔离，互不干扰。&lt;/p>
+&lt;p>举例来说，有一个全局类Constants，其中定义了一个static类型的count变量，默认值为0，然后有两个Activity，AActivity在a进程，BActivity在b进程，在AActivity中调用Constants.count++;此时count=1，接着启动BActivity，在其onCreate()中打印Constants.count，其值依然为0，并不是1。&lt;/p>
+&lt;p>也就是说对于不同的进程，内存级别的数据是无法共享的，因为这个数据在不同进程中完全是两套内存。&lt;/p>
+&lt;p>但线程就不存在这种情况，因为属于同一进程，共享该进程下的内存单元，只是需要处理好数据同步的问题而已。&lt;/p>
+&lt;h2 id="android中的进程">Android中的进程
+&lt;/h2>&lt;p>在Android中，一个APP就是一个单独的进程，这个进程是fork自zygote进程，并带了JVM，当然一个APP也可以创建额外的进程，同样是fork自zygote进程，也同样带了JVM，从不同进程拥有各自的JVM这里，也能看出进程的内存单元也是独立的。&lt;/p>
+&lt;h2 id="为什么要开启多进程">为什么要开启多进程
+&lt;/h2>&lt;p>一个APP开启多进程，当然是多进程有一些优点是单进程替代不了的。&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>突破单进程的内存大小限制&lt;/p>
+&lt;p>比如：APP中有比较耗内存的功能模块，为避免OOM，就可以放到子进程中处理&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>解决系统组件的内存泄露&lt;/p>
+&lt;p>比如：webview组件会造成内存泄露，那么就可以在退出webview的时候把所在的子进程也杀掉，从而解决内存泄露的问题。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h2 id="为什么会有ipc">为什么会有IPC
+&lt;/h2>&lt;p>为什么会有跨进程通信呢？各自独立不行吗？&lt;/p>
+&lt;p>这个就好比，有人的地方就有江湖一样，人虽然是个体，但却免不了与其他人发生各种各样的关联。&lt;/p>
+&lt;p>进程也一样，虽然APP都各自独立，但也免不了依赖别的进程，这些进程可能是其他APP，也可能是系统服务进程，&lt;/p>
+&lt;p>比如startActivity()的操作，虽然是启动自己的Activity，但内部用到了ActivityManagerService，该服务是一个系统级的服务，在一个叫SystemServer的进程中。&lt;/p>
+&lt;p>也可能让别的APP依赖自己，这种情况可以通过ContentProvidor来对外提供服务，其内部也是基于IPC机制实现的。&lt;/p>
+&lt;p>所以，IPC就跟人的社交一样不可或缺。&lt;/p></description></item></channel></rss>

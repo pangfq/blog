@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Java on Num21</title><link>https://pangfq.github.io/blog/categories/java/</link><description>Recent content in Java on Num21</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 08 Feb 2021 19:11:20 -0800</lastBuildDate><atom:link href="https://pangfq.github.io/blog/categories/java/index.xml" rel="self" type="application/rss+xml"/><item><title>Java中的CAS机制</title><link>https://pangfq.github.io/blog/p/java-cas/</link><pubDate>Mon, 08 Feb 2021 19:11:20 -0800</pubDate><guid>https://pangfq.github.io/blog/p/java-cas/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>CAS，Compare And Swap，直译为比较并替换，是JDK提供的非阻塞原子性操作。&lt;/p>
+&lt;p>位于java.util.concurrent.atomic包下，例如：AtomicInteger、AtomicBoolean、AtomicLong等等。&lt;/p>
+&lt;h2 id="原理">原理
+&lt;/h2>&lt;p>给变量赋值之前，先从内存中取出最新的值，与之前旧值进行比较，如果一致则更新；如果不一致则重新计算结果，并重复刚才的比较操作，这个操作叫CAS的”自旋“操作。&lt;/p>
+&lt;h2 id="源码">源码
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">AtomicInteger&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">extends&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Number&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">implements&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">io&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">Serializable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">sun&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">misc&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">Unsafe&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">U&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">sun&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">misc&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">Unsafe&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getUnsafe&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">incrementAndGet&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">U&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getAndAddInt&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">VALUE&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>内部是通过JDK的sun.misc.Unsafe类来实现CAS操作，sun.misc.Unsafe是JDK内部工具类，从名字上就可以看出，该类对于Java层来讲是”不安全“的，只能通过反射的方式调用。&lt;/p>
+&lt;h2 id="aba问题">ABA问题
+&lt;/h2>&lt;p>CAS操作会有ABA问题，就是把一个变量的值从A更新到B再更新回A时，无法确定变量是否有被更新过的问题。&lt;/p>
+&lt;p>如何解决？&lt;/p>
+&lt;p>通过版本号控制的方式来区分，就是每次更新都会改变版本号，这样即使变量的值被更新成相同的值但因为版本号不同也可以区分出来。&lt;/p></description></item><item><title>volatile关键字的作用</title><link>https://pangfq.github.io/blog/p/java-volatile/</link><pubDate>Fri, 05 Feb 2021 18:55:20 -0800</pubDate><guid>https://pangfq.github.io/blog/p/java-volatile/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>volatile，Java中的关键字，用于修饰变量，中文表示不稳定的，易变的意思。&lt;/p>
+&lt;h2 id="作用">作用
+&lt;/h2>&lt;p>volatile有两个作用：&lt;/p>
+&lt;ol>
+&lt;li>保证并发编程下的内存可见性&lt;/li>
+&lt;li>保证并发编程下的代码有序性，禁止指令重排优化&lt;/li>
+&lt;/ol>
+&lt;h3 id="保证并发编程下的程序可见性">保证并发编程下的程序可见性
+&lt;/h3>&lt;p>可见性，表示一个线程修改了某个变量，则其他线程可以立即同步&lt;/p>
+&lt;p>因为在多核CPU中，每个核心都有各自的高速缓存，分别是一级和二级，其实还有第三级，但第三级是共享的高速缓存&lt;/p>
+&lt;p>CPU在进行运算的时候，先从一级缓存中取数据，没有再去二级缓存中，还没有则取三级缓存，如果三级缓存中也没有的话才会到主存中取&lt;/p>
+&lt;p>对应的写操作同理，也是先写到高速缓存最后才同步到主存&lt;/p>
+&lt;p>所以，在并发编程中就会出现数据不同步的问题，比如，在一个两核心的CPU中，线程A在核心a中运行，将初始值为0的变量i加1后更新到自己的高速缓存中，此时的变量i=1；线程B在核心b中运行，同样执行i+1操作，但由于主存中的变量i仍然是0，得到的i=1，所以这样就造成了并发编程下的可见性问题，其实就是数据不同步的问题&lt;/p>
+&lt;p>被volatile修饰的变量表示每次读写都会到主存中，这样可以保证数据的可见性（一致性）&lt;/p>
+&lt;h3 id="保证并发编程下的程序有序性禁止指令重排优化">保证并发编程下的程序有序性，禁止指令重排优化
+&lt;/h3>&lt;p>什么是指令重排？&lt;/p>
+&lt;p>计算机在执行程序时，为了最大化地提高CPU内部各种计算单元的利用率，常常对所要执行的指令（程序）做重排优化&lt;/p>
+&lt;p>当然这个指令重排对于单线程不会有影响，但在多线程情况下会导致有序性的问题&lt;/p>
+&lt;p>这个问题就是，在多线程编程情况下，可能会出现得到的实际对象为null的问题。&lt;/p>
+&lt;p>比如：在double check写法的单例模式下，线程A执行了new操作，但由于指令重排的存在，可能会导致线程B在获取实例的时候该实例变量不为null，但实际指向的对象还未初始化的情况，造成线程B得到一个变量不为null，但实际指向的对象却是null的情况。&lt;/p>
+&lt;h2 id="相关问题">相关问题
+&lt;/h2>&lt;p>一个int变量用volatile修饰后能保证并发编程下的线程安全吗？&lt;/p>
+&lt;p>答：不能。因为volatile可以实现并发编程下的两个特性，一个是可见性，一个是有序性，但无法实现操作的原子性，也就是如果这个操作不是原子性的，比如i++就无法保证并发编程下的线程安全。&lt;/p></description></item><item><title>并发编程中的三个特性</title><link>https://pangfq.github.io/blog/p/java-concurrent-program-3/</link><pubDate>Thu, 04 Feb 2021 17:02:20 -0800</pubDate><guid>https://pangfq.github.io/blog/p/java-concurrent-program-3/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>在多线程的编程中，首先要掌握的是三个特性：可见性、原子性、有序性，这三个特性是多线程编程的基础，理解了三个特性之后才能理解多线程编程。&lt;/p>
+&lt;h2 id="可见性">可见性
+&lt;/h2>&lt;p>可见性，指的是内存可见性。&lt;/p>
+&lt;p>就是当多线程并发访问内存中的共享变量的时候，一个线程对共享变量的修改，其他线程能够立即看到。&lt;/p>
+&lt;p>这个特性出现的前提源于CPU内核中高速缓存的存在引起的。&lt;/p>
+&lt;p>由于CPU计算速度远远快于内存条的读取速度，所以不得不在两者之间增加一个缓存，这个缓存就叫高速缓存，位于CPU内部，并且CPU中每个核心都有一个高速缓存。那为什么不直接将内存条全部换成高速缓存呢？因为高速缓存太过昂贵，权衡利弊之下只能如此。&lt;/p>
+&lt;p>这也导致多线程编程下出现了可见性问题。&lt;/p>
+&lt;p>假如在一个双核CPU中分别运行两个线程A和B，内存中有一个int型变量i，其默认值为1，线程A读取i到自己的高速缓存中，并执行i++，此时i=2，但并没有刷新到内存中。&lt;/p>
+&lt;p>接着线程B从内存中读取到的变量i的值依旧是1，这样就导致共享变量在线程间不可见的问题。&lt;/p>
+&lt;p>我们后面再讲解决方法。&lt;/p>
+&lt;h2 id="原子性">原子性
+&lt;/h2>&lt;p>原子性，指的是操作的原子性。&lt;/p>
+&lt;p>原子性类似于数据库中的事务操作，要么全部执行，要么全部不执行。&lt;/p>
+&lt;p>对于CPU中的操作就是指令，这些指令都是原子性的，而向上到了Java层的操作，就是代码，Java是高级语言，有很强的封装性，可能一个操作包含了多个子操作，比如：i++，这个操作可以分成3个子操作：&lt;/p>
+&lt;ol>
+&lt;li>取值：获取i的值&lt;/li>
+&lt;li>计算：计算i+1的结果&lt;/li>
+&lt;li>赋值：把结果赋值给i&lt;/li>
+&lt;/ol>
+&lt;p>不是原子性的操作，在多线程编程下就会有问题，因为操作系统可以在任意一步子操作中切走CPU时间片。&lt;/p>
+&lt;p>举个例子：两个线程同时对变量进行i++操作，i的默认值为1，当线程A执行到第2步子操作也就是执行了1+1=2这步，已经得到结果了，但还没有赋值给i，操作系统将CPU时间片切到线程B，线程B执行第1步子操作获取i的值，按理讲i=2了，但由于线程A并没有将结果赋值给i导致线程B获取到的i=1，此后线程B执行完所有子操作得到的i=2，而线程A得到的i同样是2，但其实是两个线程都做了i++的操作，理应为3才对，这就是多线程编程下不是原子性操作带来的问题。&lt;/p>
+&lt;p>上述也可以类比成在ATM上存钱的过程，比如两个人同时在ATM上用一个账户存钱，原账户为0元，两人同时查询到账户看到显示为0元，然后各自往里面存10万，但一个人存入后还没来得及将账户金额更新，另一个人就存进去了，结果各自存完钱后看到的金额是10万，但其实两个人都存了10万，应该账户上有20万才对。&lt;/p>
+&lt;h2 id="有序性">有序性
+&lt;/h2>&lt;p>有序性，指的是代码执行的有序性。&lt;/p>
+&lt;p>Java为了提高代码的执行效率，会对代码进行重拍优化，当然这个重排并不会影响执行结果。&lt;/p>
+&lt;p>下面举个例子：&lt;/p>
+&lt;p>Object obj = new Object();&lt;/p>
+&lt;p>这是一行创建对象并赋值到变量obj的代码，重排优化之前是这个步骤：&lt;/p>
+&lt;ol>
+&lt;li>创建变量obj&lt;/li>
+&lt;li>创建内存空间得到地址0x111&lt;/li>
+&lt;li>在该内存空间中初始化对象new Object()&lt;/li>
+&lt;li>将该内存空间的地址0x111赋值给变量obj&lt;/li>
+&lt;/ol>
+&lt;p>但重排优化之后，3和4的步骤就调换了顺序，也就是先将内存空间的地址赋值给变量obj，然后才初始化内存空间，这就导致在多线程编程下获取到的变量obj的值不为null，但对象却没有初始化的情况，太诡异了。&lt;/p></description></item><item><title>Java中的内存模型</title><link>https://pangfq.github.io/blog/p/java-jmm/</link><pubDate>Tue, 02 Feb 2021 18:55:20 -0800</pubDate><guid>https://pangfq.github.io/blog/p/java-jmm/</guid><description>&lt;h2 id="什么是内存模型">什么是内存模型
+&lt;/h2>&lt;p>为了保证并发编程的正确性，包括可见性、有序性、原子性，定义了多线程下读写系统内存的操作==规范==&lt;/p>
+&lt;p>所以，内存模型是一个抽象概念，是一种规范&lt;/p>
+&lt;p>但为什么会有Java内存模型？&lt;/p>
+&lt;h2 id="为什么需要内存模型">为什么需要内存模型
+&lt;/h2>&lt;p>我们知道，之所以Java是跨平台的，是因为Java虚拟机的功劳，是Java虚拟机屏蔽了各种硬件和操作系统的访问差异，保证Java程序在各种平台上的运行都能一致&lt;/p>
+&lt;p>在这个里面，就有对内存的规范，Java提供了一个内存规范，或者说模型，让不同的操作系统去实现各自的内存访问机制&lt;/p>
+&lt;h2 id="总结">总结
+&lt;/h2>&lt;p>Java内存模型，是和Java的并发编程有关&lt;/p></description></item><item><title>HTTP的缓存机制</title><link>https://pangfq.github.io/blog/p/http-cache/</link><pubDate>Mon, 01 Feb 2021 18:55:20 -0800</pubDate><guid>https://pangfq.github.io/blog/p/http-cache/</guid><description>&lt;h2 id="概述">概述
+&lt;/h2>&lt;p>Http协议的缓存策略，分为了三个版本，每个版本的策略都解决了上个版本出现的问题，所以从这方面来看，Http的缓存策略也不是说一出来就很完善，也是后面慢慢优化出来的。&lt;/p>
+&lt;p>第一个版本在Http1.0时期，剩下两个版本都是Http1.1的&lt;/p>
+&lt;h2 id="http10">Http1.0
+&lt;/h2>&lt;h3 id="版本1">版本1
+&lt;/h3>&lt;p>客户端请求某资源，服务器返回该资源，并在响应头加上字段：Expires:具体时间，例如：Expires:Thu,31 Dec 2020 23:59:59 GMT，表示该资源的过期时间&lt;/p>
+&lt;p>客户端收到该资源后，会把Expires字段也缓存下来，下次再请求相同资源时，会先取出上次请求到资源后缓存的Expires字段，再和客户端当下的时间进行对比，如果当下时间已经超过了过期时间，则重新发起请求，如果没到过期时间，则直接返回缓存（如果缓存还在的话）&lt;/p>
+&lt;p>优点就是不用再次发起请求询问服务器缓存是否有效，而缺点也是因为这个原因，完全依赖客户端的时间，那就可能会出现客户端时间不准确的情况，比如客户端修改了本地时间，这样就造成无法准确判断缓存过期时间了；另外服务器返回的Expire字段表示缓存的过期时间，而大多数情况，服务器也不知道资源啥时候过期。&lt;/p>
+&lt;p>所以，Http协议有了下面的改进：就是把决定缓存是否有效的权利从客户端移到了服务端&lt;/p>
+&lt;h2 id="http11">Http1.1
+&lt;/h2>&lt;h3 id="版本2">版本2
+&lt;/h3>&lt;p>为了解决上述问题，Http1.1新加了：&lt;/p>
+&lt;ul>
+&lt;li>Cache-Control：响应头字段，缓存策略，no-store(禁止缓存)、no-cache(这里并不是不可以缓存，而是可以缓存，但要先请求服务器验证缓存是否有效。不知道为啥起这个名字，太有误导性了，OkHttp的源码中也有类似说法，说no-cache is misleading)等等&lt;/li>
+&lt;li>Last-Modify：响应头字段，表示资源最新的修改时间&lt;/li>
+&lt;li>If-Modify-Since：请求头字段，表示资源如果自指定的时间以来修改过了，服务器就返回新资源，否则返回304状态码，客户端使用缓存即可&lt;/li>
+&lt;/ul>
+&lt;p>所以流程就变成了：&lt;/p>
+&lt;ol>
+&lt;li>客户端发起资源请求&lt;/li>
+&lt;li>服务端下发资源，并在响应头中加入Cache-Control字段告知客户端该资源的缓存策略，以及Last-Modify字段告知该资源的最新修改时间&lt;/li>
+&lt;li>客户端再次请求该资源时，在请求头中加上If-Modify-Since字段，并将上次返回资源时的响应头字段Last-Modify的时间值赋给If-Modify-Since字段&lt;/li>
+&lt;li>这样服务端和当下资源最新修改时间对比下，就知道要不要返回资源数据了&lt;/li>
+&lt;/ol>
+&lt;p>这样，缓存是否有效的决定权就从客户端移到了服务器端&lt;/p>
+&lt;p>这个思路也是我们在开发类似新闻列表需求时，请求数据有没有更新的思路。&lt;/p>
+&lt;p>但这个是有问题的：&lt;/p>
+&lt;ol>
+&lt;li>Last-Modify表示的最小粒度是秒，而如果一个资源在一秒内多次修改就无法表示了&lt;/li>
+&lt;li>只能表示时间变化这一个维度，如果文件内容没变，只是更新了时间 就无法表示了&lt;/li>
+&lt;/ol>
+&lt;p>基于上述两个问题，就出现了第三个版本&lt;/p>
+&lt;h3 id="版本3">版本3
+&lt;/h3>&lt;p>Http1.1又更新了小版本来优化上述问题，新加入了ETag、If-None-Match头字段&lt;/p>
+&lt;ul>
+&lt;li>ETag：响应头字段，资源内容的唯一标识，相当于资源的信息摘要，内容变化ETag的值也会跟着变，这样解决了修改时间变化，但内容不变造成的缓存失效问题，节约了流量。格式是字符串，但要放在双引号中，例如：&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">ETag: &amp;#34;1ec5-502264e2ae4c0&amp;#34;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>If-None-Match: 请求头字段，该字段由客户端发起，带上上次返回资源时的ETag值，这样服务端就可以对比资源最新的ETag值，如果不一样就返回资源数据，否则不返回&lt;/li>
+&lt;li>If-Match: 这个和If-None-Match正好相反，是一致返回资源，否则不返回。可以了解下，一般不用它&lt;/li>
+&lt;/ul>
+&lt;h2 id="总结">总结
+&lt;/h2>&lt;p>Http的缓存机制，其实就是一些请求头和响应头的字段，理解并记忆即可。&lt;/p>
+&lt;ul>
+&lt;li>版本一：Expires字段，表示资源的过期时间&lt;/li>
+&lt;li>版本二：Cache-Control（no-stroe、no-cache）、Last-Modify（资源上次的更新时间）、If-Modify-Since&lt;/li>
+&lt;li>版本三：E-Tag、If-None-Match&lt;/li>
+&lt;/ul></description></item></channel></rss>
